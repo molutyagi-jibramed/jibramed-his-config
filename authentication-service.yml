@@ -1,7 +1,7 @@
 # This file contains properties specific to the Authentication Service.
 
 server:
-  port: 8081 # A dedicated internal port for the auth service.
+  port: 9000 # A dedicated internal port for the auth service.
 
 # --- Database Configuration ---
 # This service connects to the central platform_db to find tenants and platform users.
