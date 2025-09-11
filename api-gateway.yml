@@ -1,0 +1,22 @@
+# This file contains properties specific to the API Gateway service.
+
+server:
+  port: 9090 # The public-facing port for the entire application.
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        # Route for Authentication Service
+        # Any request to the gateway with a path like /auth/... will be forwarded
+        # to an instance of AUTH-SERVICE discovered via Eureka.
+        - id: auth-service-route
+          uri: lb://AUTH-SERVICE # "lb" means load-balanced across instances of the service.
+          predicates:
+            - Path=/auth/**
+
+        # We can add routes for future services here
+        # - id: tenant-service-route
+        #   uri: lb://TENANT-MANAGEMENT-SERVICE
+        #   predicates:
+        #     - Path=/tenants/**

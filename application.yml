@@ -1,0 +1,10 @@
+# This file contains properties that are shared across ALL microservices.
+
+eureka:
+  client:
+    service-url:
+      # This tells every microservice where to find the discovery server to register itself.
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    # Use the service's IP address when registering with Eureka, which is often more reliable in containerized environments.
+    prefer-ip-address: true
