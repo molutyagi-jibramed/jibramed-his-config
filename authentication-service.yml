@@ -25,3 +25,9 @@ jwt:
   expiration:
     access: 900000 # 15 mins
     refresh: 604800000 # 7 days
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "env,health"
