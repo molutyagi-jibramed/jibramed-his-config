@@ -1,23 +1,40 @@
 # This file contains properties specific to the Authentication Service.
 
 server:
-  port: 9000 # A dedicated internal port for the auth service.
+  port: 9000
 
-# --- Database Configuration ---
-# This service connects to the central platform_db to find tenants and platform users.
 spring:
+  # Platform Database Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
-    username: postgres
-    password: root
-    driver-class-name: org.postgresql.Driver
+    platform:
+      url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
+      username: postgres
+      password: root
+      driver-class-name: org.postgresql.Driver
+      hikari:
+        maximum-pool-size: 10
+        minimum-idle: 2
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        pool-name: PlatformHikariPool
+
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show_sql: false
+    open-in-view: false
+
+  # Cache Configuration
+  cache:
+    type: simple
+    cache-names:
+      - tenants
+      - tenant-datasources
 
 # --- JWT Configuration ---
 security:
@@ -27,8 +44,37 @@ security:
       access: 900000 # 15 mins
       refresh: 604800000 # 7 days
 
+# Management/Actuator Configuration
 management:
   endpoints:
     web:
       exposure:
-        include: "env,health"
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Application Specific Configuration
+app:
+  tenant:
+    platform-domain: platform.com
+    cache-ttl: 3600 # 1 hour in seconds
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - https://*.platform.com
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - Authorization
+      - Content-Type
+      - X-Requested-With
+    max-age: 3600
