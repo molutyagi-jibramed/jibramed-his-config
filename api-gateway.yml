@@ -11,7 +11,7 @@ spring:
       routes:
         # Route for Tenant Service
         - id: tenant-service-route
-          uri: lb://tenant-service # "lb" means load-balanced via Eureka
+          uri: lb://TENANT-SERVICE # "lb" means load-balanced via Eureka
           predicates:
             - Path=/api/v1/tenants/**
           filters:
