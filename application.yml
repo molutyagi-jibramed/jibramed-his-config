@@ -1,10 +1,16 @@
-# This file contains properties that are shared across ALL microservices.
+# -----------------------------------------------------------------------------
+# SHARED CONFIGURATION (for all microservices)
+# -----------------------------------------------------------------------------
+# Properties in this file are inherited by all services connecting to the
+# Config Server.
+# -----------------------------------------------------------------------------
 
 eureka:
   client:
+    # This tells every microservice where to find the discovery server.
     service-url:
-      # This tells every microservice where to find the discovery server to register itself.
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://service-registry:8761/eureka/
   instance:
-    # Use the service's IP address when registering with Eureka, which is often more reliable in containerized environments.
+    # Use the service's IP address when registering with Eureka.
+    # This is more reliable in containerized environments like Docker.
     prefer-ip-address: true
