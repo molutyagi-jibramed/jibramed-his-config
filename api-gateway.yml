@@ -21,7 +21,7 @@ spring:
 
         # Route for Authentication Service
         - id: auth-service-route
-          uri: lb://Authentication-service
+          uri: lb://authentication-service
           predicates:
             - Path=/api/v1/auth/**
           filters:
@@ -29,7 +29,7 @@ spring:
 
         # Route for Hospital Service
         - id: hospital-service-route
-          uri: lb://HOSPITAL-SERVICE
+          uri: lb://hospital-service
           predicates:
             - Path=/api/v1/hospitals/**
           filters:
