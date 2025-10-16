@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 server:
   # The public-facing port for the entire application.
-  port: 9090
+  port: 9999
 
 spring:
   cloud:
