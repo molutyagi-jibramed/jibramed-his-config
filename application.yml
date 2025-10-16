@@ -9,7 +9,7 @@ eureka:
   client:
     # This tells every microservice where to find the discovery server.
     service-url:
-      defaultZone: http://service-registry:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
   instance:
     # Use the service's IP address when registering with Eureka.
     # This is more reliable in containerized environments like Docker.
