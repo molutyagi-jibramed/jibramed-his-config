@@ -12,9 +12,8 @@ spring:
     password: root
 
   jpa:
-    hibernate:
-      # This tells Hibernate to check the schema, but not create/update it.
-      # ddl-auto: validate
+    # This tells Hibernate to check the schema, but not create/update it.
+    # ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
