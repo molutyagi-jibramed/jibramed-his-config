@@ -2,7 +2,7 @@
 # PLATFORM USER SERVICE CONFIGURATION
 # -----------------------------------------------------------------------------
 server:
-  port: 18112 # Example port for this service
+  port: 19111
 
 spring:
   datasource:
@@ -14,11 +14,10 @@ spring:
   jpa:
     hibernate:
       # This tells Hibernate to check the schema, but not create/update it.
-      ddl-auto: validate
+      # ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    # ✅ THE FIX: This property tells Spring to run Flyway BEFORE Hibernate validation.
     defer-datasource-initialization: true
 
   flyway:
