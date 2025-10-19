@@ -2,51 +2,33 @@
 # PLATFORM USER SERVICE CONFIGURATION
 # -----------------------------------------------------------------------------
 server:
-  port: 19111
+  port: 18112 # Example port for this service
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
+    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db # Make sure this is your correct DB
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
-    hikari:
-      maximum-pool-size: 10
 
   jpa:
     hibernate:
+      # This tells Hibernate to check the schema, but not create/update it.
       ddl-auto: validate
-    show-sql: true
     properties:
       hibernate:
-        defer-datasource-initialization: true
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    # ✅ THE FIX: This property tells Spring to run Flyway BEFORE Hibernate validation.
+    defer-datasource-initialization: true
 
   flyway:
-    baseline-on-migrate: true
+    # Ensures Flyway runs and manages the schema.
+    enabled: true
+    # The location of your SQL migration scripts.
     locations: classpath:db/migration
 
-  cloud:
-    config:
-      fail-fast: true
-      retry:
-        max-attempts: 10
-        max-interval: 2000
-        multiplier: 1.1
-        initial-interval: 1000
-
-# Logging Configuration
-logging:
-  level:
-    com.his.jibramed: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-
-# Custom application-specific properties
-app:
-  tenant:
-    default-db-prefix: user_
-    create-db-on-register: true
-    db-admin-user: postgres
-    db-admin-password: root
+# You would also have your Eureka client config here...
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
