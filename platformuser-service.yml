@@ -22,8 +22,7 @@ spring:
     defer-datasource-initialization: true
 
   flyway:
-    # Ensures Flyway runs and manages the schema.
-    enabled: true
+    baseline-on-migrate: true
     # The location of your SQL migration scripts.
     locations: classpath:db/migration
 
