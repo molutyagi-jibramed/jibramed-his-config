@@ -6,26 +6,46 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db # Make sure this is your correct DB
+    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
+    hikari:
+      maximum-pool-size: 10
 
   jpa:
-    # This tells Hibernate to check the schema, but not create/update it.
-    # ddl-auto: validate
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
     properties:
       hibernate:
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
 
   flyway:
     baseline-on-migrate: true
-    # The location of your SQL migration scripts.
     locations: classpath:db/migration
 
-# You would also have your Eureka client config here...
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 10
+        max-interval: 2000
+        multiplier: 1.1
+        initial-interval: 1000
+
+# Logging Configuration
+logging:
+  level:
+    com.his.jibramed: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+
+# Custom application-specific properties
+app:
+  tenant:
+    default-db-prefix: platformuser_
+    create-db-on-register: true
+    db-admin-user: postgres
+    db-admin-password: root
