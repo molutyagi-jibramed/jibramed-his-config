@@ -45,7 +45,9 @@ logging:
 # Custom application-specific properties
 app:
   tenant:
-    default-db-prefix: tenant_
-    create-db-on-register: true
-    db-admin-user: postgres
-    db-admin-password: root
+    db:
+      default-db-prefix: tenant_
+      create-db-on-register: true
+      admin-user: postgres
+      admin-password: root
+      admin-url: jdbc:postgresql://localhost:5432/postgres
