@@ -11,6 +11,16 @@ spring:
       server:
         webflux:
           routes:
+            # Route for Platform User Service
+            - id: platformuser-service-route
+              uri: lb://PLATFORMUSER-SERVICE # "lb" means load-balanced via Eureka
+              predicates:
+                - Path=/api/v1/users/**
+              filters:
+                # Strips the first 2 path segments (/api/v1) before forwarding.
+                # So, /api/v1/users/1 -> /users/1
+                - StripPrefix=2
+
             # Route for Tenant Service
             - id: tenant-service-route
               uri: lb://TENANT-SERVICE # "lb" means load-balanced via Eureka
