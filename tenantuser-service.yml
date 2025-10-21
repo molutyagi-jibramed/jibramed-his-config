@@ -6,7 +6,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
+    url: jdbc:postgresql://localhost:5432/tenant_jibramed_general
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: root
