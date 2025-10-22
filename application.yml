@@ -14,3 +14,23 @@ eureka:
     # Use the service's IP address when registering with Eureka.
     # This is more reliable in containerized environments like Docker.
     prefer-ip-address: true
+
+spring:
+  datasource:
+    master:
+      url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
+      username: postgres
+      password: root
+      driver-class-name: org.postgresql.Driver
+
+# This ensures that Flyway (if you use it) only runs on the master DB
+# and doesn't try to use the multi-tenant routing datasource.
+flyway:
+  url: ${spring.datasource.master.url}
+  user: ${spring.datasource.master.username}
+  password: ${spring.datasource.master.password}
+
+# Disable JPA DDL auto for the routing datasource
+jpa:
+  hibernate:
+    ddl-auto: none
