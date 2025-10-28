@@ -71,6 +71,7 @@ logging:
     org.springframework.http.server.reactive: DEBUG
     org.springframework.web.reactive: DEBUG
     reactor.netty: DEBUG
+    org.springframework.cloud.gateway.route.RouteDefinitionLocator: TRACE
 
 management:
   endpoints:
