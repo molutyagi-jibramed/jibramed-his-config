@@ -24,7 +24,7 @@ spring:
         - id: platformuser-service-route
           uri: lb://PLATFORMUSER-SERVICE
           predicates:
-            - Host=jibramed.com,www.jibramed.com
+            - Host=jibramed.com,www.jibramed.com,localhost,www.localhost
             - Path=/api/v1/users/**
           filters:
             - StripPrefix=2
