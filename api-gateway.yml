@@ -8,6 +8,13 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: test-route
+          uri: https://httpbin.org
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+
         # ------------------------------------------------------
         # AUTHENTICATION SERVICE
         # ------------------------------------------------------
