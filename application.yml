@@ -34,3 +34,7 @@ flyway:
 jpa:
   hibernate:
     ddl-auto: none
+
+app:
+  base-domain: "jibramed.com"
+  tenant-signing-secret: " s up  erse cret key1 2345 "
