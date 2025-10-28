@@ -2,60 +2,69 @@
 # API GATEWAY CONFIGURATION
 # -----------------------------------------------------------------------------
 server:
-  # The public-facing port for the entire application.
   port: 8080
 
 spring:
   cloud:
     gateway:
-      server:
-        webflux:
-          routes:
-            # Route for Authentication Service
-            - id: auth-service-route
-              uri: lb://authentication-service
-              predicates:
-                - Path=/api/v1/auth/**
-              filters:
-                - StripPrefix=2
+      routes:
+        # ------------------------------------------------------
+        # AUTHENTICATION SERVICE
+        # ------------------------------------------------------
+        - id: auth-service-route
+          uri: lb://AUTHENTICATION-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=2
 
-            # Route for Platform User Service
-            - id: platformuser-service-route
-              uri: lb://PLATFORMUSER-SERVICE # "lb" means load-balanced via Eureka
-              predicates:
-                - Path=/api/v1/users/**
-              filters:
-                # Strips the first 2 path segments (/api/v1) before forwarding.
-                # So, /api/v1/users/1 -> /users/1
-                - StripPrefix=2
+        # ------------------------------------------------------
+        # PLATFORM USER SERVICE (for jibramed.com or www.jibramed.com)
+        # ------------------------------------------------------
+        - id: platformuser-service-route
+          uri: lb://PLATFORMUSER-SERVICE
+          predicates:
+            - Host=jibramed.com,www.jibramed.com
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+            - RemoveRequestHeader=X-Tenant-ID
 
-            # Route for Tenant Service
-            - id: tenant-service-route
-              uri: lb://TENANT-SERVICE # "lb" means load-balanced via Eureka
-              predicates:
-                - Path=/api/v1/tenants/**
-              filters:
-                # Strips the first 2 path segments (/api/v1) before forwarding.
-                # So, /api/v1/tenants/1 -> /tenants/1
-                - StripPrefix=2
+        # ------------------------------------------------------
+        # TENANT USER SERVICE (for hospital subdomains)
+        # ------------------------------------------------------
+        - id: tenantuser-service-route
+          uri: lb://TENANTUSER-SERVICE
+          predicates:
+            - Host=**.jibramed.com,**.localhost
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+            - PreserveHostHeader=true
 
-            # Route for Tenant User Service
-            - id: tenantuser-service-route
-              uri: lb://TENANTUSER-SERVICE # "lb" means load-balanced via Eureka
-              predicates:
-                - Path=/api/v1/users/**
-              filters:
-                # Strips the first 2 path segments (/api/v1) before forwarding.
-                # So, /api/v1/users/1 -> /users/1
-                - StripPrefix=2
+        # ------------------------------------------------------
+        # TENANT SERVICE (tenant registration, etc.)
+        # ------------------------------------------------------
+        - id: tenant-service-route
+          uri: lb://TENANT-SERVICE
+          predicates:
+            - Path=/api/v1/tenants/**
+          filters:
+            - StripPrefix=2
 
-            # Route for Hospital Service
-            - id: hospital-service-route
-              uri: lb://hospital-service
-              predicates:
-                - Path=/api/v1/hospitals/**
-              filters:
-                - StripPrefix=2
+        # ------------------------------------------------------
+        # HOSPITAL SERVICE
+        # ------------------------------------------------------
+        - id: hospital-service-route
+          uri: lb://HOSPITAL-SERVICE
+          predicates:
+            - Path=/api/v1/hospitals/**
+          filters:
+            - StripPrefix=2
+
+# -----------------------------------------------------------------------------
+# LOGGING AND MANAGEMENT
+# -----------------------------------------------------------------------------
 logging:
   level:
     org.springframework.cloud.gateway: TRACE
