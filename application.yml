@@ -37,3 +37,5 @@ jpa:
 
 app:
   base-domain: "jibramed.com"
+  tenant-jwt-secret: super-secure-signing-key-123456
+  tenant-jwt-expiry-minutes: 5
