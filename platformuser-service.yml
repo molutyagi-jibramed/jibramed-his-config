@@ -45,7 +45,7 @@ logging:
 # Custom application-specific properties
 app:
   tenant:
-    default-db-prefix: platformuser_
+    # default-db-prefix: platformuser_
     create-db-on-register: true
     db-admin-user: postgres
     db-admin-password: root
