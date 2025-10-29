@@ -37,5 +37,3 @@ jpa:
 
 app:
   base-domain: "jibramed.com"
-  tenant-signing-secret: " s up  erse cret key1 2345 "
-  tenant-jwt-expiry-minutes: 5

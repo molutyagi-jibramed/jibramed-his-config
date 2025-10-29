@@ -83,3 +83,7 @@ management:
   endpoint:
     gateway:
       access: unrestricted
+
+app:
+  tenant-jwt-secret: super-secure-signing-key-123456
+  tenant-jwt-expiry-minutes: 5
