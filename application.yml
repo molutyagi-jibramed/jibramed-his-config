@@ -46,4 +46,4 @@ com:
   his:
     jibramed:
       multitenancy:
-        header-name: X-Tenant-ID
+        header-name: X-Tenant-TOKEN
