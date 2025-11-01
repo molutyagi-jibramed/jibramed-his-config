@@ -67,8 +67,6 @@ logging:
     reactor.netty: WARN
   file:
     name: logs/jibramed-application.log
-    max-size: 10MB
-    max-history: 10
   logback:
     rollingpolicy:
       max-file-size: 10MB
