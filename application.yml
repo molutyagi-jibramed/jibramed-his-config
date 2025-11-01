@@ -39,9 +39,8 @@ app:
   base-domain: "jibramed.com"
   tenant-jwt-secret: c42ae66c79c7aaf836e334617915f682ed539c7d8549f27778963cf191db9a8d18962260c971b58071048a0b2350e959791a63ec44846f45a501b02dd7095ca3
   tenant-jwt-expiry-minutes: 5
-  multitenancy:
-    realm-header-name: X-realm
-    tenant-header-name: X-Tenant-TOKEN
+  realm-header-name: X-realm
+  tenant-header-name: X-Tenant-TOKEN
 
 # Multitenancy Library Configuration
 # We tell our common library which header to read.
