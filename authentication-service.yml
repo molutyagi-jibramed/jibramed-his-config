@@ -1,22 +1,19 @@
 server:
   port: 9000
-
-spring:
-  cache:
-    type: simple
-    cache-names: tenants, tenant-datasources
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-
-app:
-  cors:
-    allowed-origins:
-      # - http://localhost:3000
-      - https://*.jibramed.com
-    allowed-methods: GET, POST, PUT, DELETE, OPTIONS
-    allowed-headers: Authorization, Content-Type, X-Requested-With
-    max-age: 3600
+# spring:
+#   cache:
+#     type: simple
+#     cache-names: tenants, tenant-datasources
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: health,info,metrics,prometheus
+# app:
+#   cors:
+#     allowed-origins:
+#       # - http://localhost:3000
+#       - https://*.jibramed.com
+#     allowed-methods: GET, POST, PUT, DELETE, OPTIONS
+#     allowed-headers: Authorization, Content-Type, X-Requested-With
+#     max-age: 3600
