@@ -64,16 +64,51 @@ spring:
               filters:
                 - StripPrefix=2
 
-# -----------------------------------------------------------------------------
-# LOGGING AND MANAGEMENT
-# -----------------------------------------------------------------------------
-logging:
-  level:
-    org.springframework.cloud.gateway: TRACE
-    org.springframework.http.server.reactive: DEBUG
-    org.springframework.web.reactive: DEBUG
-    reactor.netty: DEBUG
-    org.springframework.cloud.gateway.route.RouteDefinitionLocator: TRACE
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - RemoveResponseHeader=Server
+        - RemoveResponseHeader=X-Powered-By
+      routes:
+        - id: auth-service
+          uri: lb://AUTHENTICATION-SERVICE
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=2
+
+        - id: platformuser-service
+          uri: lb://PLATFORMUSER-SERVICE
+          predicates:
+            - Host=localhost, www.localhost, jibramed.com, www.jibramed.com
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+            - RemoveRequestHeader=X-Tenant-ID
+
+        - id: tenantuser-service
+          uri: lb://TENANTUSER-SERVICE
+          predicates:
+            - Host=**.jibramed.com, **.localhost
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+            - PreserveHostHeader=true
+
+        - id: tenant-service
+          uri: lb://TENANT-SERVICE
+          predicates:
+            - Path=/api/v1/tenants/**
+          filters:
+            - StripPrefix=2
+
+        - id: hospital-service
+          uri: lb://HOSPITAL-SERVICE
+          predicates:
+            - Path=/api/v1/hospitals/**
+          filters:
+            - StripPrefix=2
 
 management:
   endpoints:

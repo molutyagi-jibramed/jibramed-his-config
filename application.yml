@@ -1,51 +1,90 @@
-# -----------------------------------------------------------------------------
-# SHARED CONFIGURATION (for all microservices)
-# -----------------------------------------------------------------------------
-# Properties in this file are inherited by all services connecting to the
-# Config Server.
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------
+# GLOBAL CONFIGURATION (shared across all microservices)
+# -------------------------------------------------------------------
+
+spring:
+  application:
+    name: ${spring.application.name}
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    baseline-on-migrate: true
+
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 10
+        max-interval: 2000
+        multiplier: 1.1
+        initial-interval: 1000
 
 eureka:
   client:
-    # This tells every microservice where to find the discovery server.
     service-url:
       defaultZone: http://localhost:8761/eureka/
   instance:
-    # Use the service's IP address when registering with Eureka.
-    # This is more reliable in containerized environments like Docker.
     prefer-ip-address: true
 
-spring:
-  datasource:
-    master:
-      url: jdbc:postgresql://localhost:5432/jibramed-his-platform-db
-      username: postgres
-      password: root
-      driver-class-name: org.postgresql.Driver
-
-# This ensures that Flyway (if you use it) only runs on the master DB
-# and doesn't try to use the multi-tenant routing datasource.
-flyway:
-  url: ${spring.datasource.master.url}
-  user: ${spring.datasource.master.username}
-  password: ${spring.datasource.master.password}
-
-# Disable JPA DDL auto for the routing datasource
-jpa:
-  hibernate:
-    ddl-auto: none
-
+# -------------------------------------------------------------------
+# APPLICATION-LEVEL SETTINGS
+# -------------------------------------------------------------------
 app:
-  base-domain: "jibramed.com"
-  tenant-jwt-secret: c42ae66c79c7aaf836e334617915f682ed539c7d8549f27778963cf191db9a8d18962260c971b58071048a0b2350e959791a63ec44846f45a501b02dd7095ca3
+  base-domain: jibramed.com
+  tenant-jwt-secret: ${TENANT_JWT_SECRET:super-secure-signing-key} c42ae66c79c7aaf836e334617915f682ed539c7d8549f27778963cf191db9a8d18962260c971b58071048a0b2350e959791a63ec44846f45a501b02dd7095ca3
   tenant-jwt-expiry-minutes: 5
-  realm-header-name: X-realm
-  tenant-header-name: X-Tenant-TOKEN
+  realm-header-name: X-Realm
+  tenant-header-name: X-Tenant-Token
 
-# Multitenancy Library Configuration
-# We tell our common library which header to read.
-com:
-  his:
-    jibramed:
-      multitenancy:
-        header-name: X-Tenant-TOKEN
+# -------------------------------------------------------------------
+# LOGGING CONFIGURATION
+# -------------------------------------------------------------------
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(%-5p) %clr([%t]){faint} %clr(%c{1.}){cyan}: %m%n%wEx"
+  level:
+    root: INFO
+    com.his.jibramed: DEBUG
+    org.springframework: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
+    org.springframework.web: WARN
+    org.springframework.cloud.gateway: INFO
+    reactor.netty: WARN
+  file:
+    name: logs/jibramed-application.log
+    max-size: 10MB
+    max-history: 10
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
+      total-size-cap: 100MB
+
+# -------------------------------------------------------------------
+# MANAGEMENT ENDPOINTS
+# -------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized

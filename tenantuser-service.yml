@@ -1,27 +1,15 @@
-# -----------------------------------------------------------------------------
-# TENANT USER SERVICE CONFIGURATION
-# -----------------------------------------------------------------------------
 server:
   port: 18211
 
 spring:
-  cloud:
-    config:
-      fail-fast: true
-      retry:
-        max-attempts: 10
-        max-interval: 200
-        multiplier: 1.1
-        initial-interval: 100
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
-# Logging Configuration
-logging:
-  level:
-    com.his.jibramed: DEBUG
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-
-# Custom application-specific properties
 app:
   tenant:
     db:
