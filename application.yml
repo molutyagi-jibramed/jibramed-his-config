@@ -61,11 +61,9 @@ app:
 # LOGGING CONFIGURATION
 # -------------------------------------------------------------------
 logging:
-  pattern:
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss}){faint} %clr(%-5p) %clr([%t]){faint} %clr(%c{1.}){cyan}: %m%n%wEx"
   level:
     root: INFO
-    com.his.jibramed: INFO
+    com.his.jibramed: DEBUG
     org.springframework: WARN
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: ERROR
