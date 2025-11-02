@@ -1,10 +1,6 @@
 server:
   port: 19111
 
-spring:
-  flyway:
-    locations: classpath:db/migration/platform
-
 app:
   tenant:
     create-db-on-register: true
