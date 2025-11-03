@@ -47,9 +47,19 @@ app:
   multitenancy:
     base-domain: jibramed.com
     tenant-jwt-secret: ${TENANT_JWT_SECRET:c42ae66c79c7aaf836e334617915f682ed539c7d8549f27778963cf191db9a8d18962260c971b58071048a0b2350e959791a63ec44846f45a501b02dd7095ca3}
-    tenant-jwt-expiry-minutes: 300000
+    tenant-jwt-expiration: 300000 # 5 mins
     realm-header-name: X-Realm
     tenant-header-name: X-Tenant-Token
+
+    tenant-datasource:
+      pool-name-prefix: "TenantPool-"
+      connection-timeout: 30000
+      maximum-pool-size: 15
+      idleTimeout: 600000 # 10 minutes
+      maxLifetime: 1800000 # 30 mins
+      datasource-cache-max-size: 100
+      dataSourceCacheExpiration: 1800000
+      leak-detection-threshold: 60000
 
   security:
     jwt: # secret: # Ideally provided as an ENV variable
