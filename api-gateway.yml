@@ -36,9 +36,7 @@ spring:
             - id: subscription-service-route
               uri: lb://SUBSCRIPTION-SERVICE
               predicates:
-                - Path=/api/v1/modules/**
-                - Path=/api/v1/subscriptions/**
-                - Path=/api/v1/plans/**
+                - Path=/api/v1/modules/**,/api/v1/subscriptions/**,/api/v1/plans/**
               filters:
                 - StripPrefix=2
 
