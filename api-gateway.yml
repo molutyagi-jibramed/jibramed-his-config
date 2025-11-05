@@ -21,6 +21,26 @@ spring:
                 - StripPrefix=2
 
             # ------------------------------------------------------
+            # TENANT SERVICE (tenant registration, etc.)
+            # ------------------------------------------------------
+            - id: tenant-service-route
+              uri: lb://TENANT-SERVICE
+              predicates:
+                - Path=/api/v1/tenants/**
+              filters:
+                - StripPrefix=2
+
+            # ------------------------------------------------------
+            # SUBSCRIPTION SERVICE (subscription registration, etc.)
+            # ------------------------------------------------------
+            - id: subscription-service-route
+              uri: lb://SUBSCRIPTION-SERVICE
+              predicates:
+                - Path=/api/v1/subscription/**
+              filters:
+                - StripPrefix=2
+
+            # ------------------------------------------------------
             # PLATFORM USER SERVICE (for jibramed.com or www.jibramed.com)
             # ------------------------------------------------------
             - id: platformuser-service-route
@@ -43,16 +63,6 @@ spring:
               filters:
                 - StripPrefix=2
                 - PreserveHostHeader=true
-
-            # ------------------------------------------------------
-            # TENANT SERVICE (tenant registration, etc.)
-            # ------------------------------------------------------
-            - id: tenant-service-route
-              uri: lb://TENANT-SERVICE
-              predicates:
-                - Path=/api/v1/tenants/**
-              filters:
-                - StripPrefix=2
 
             # ------------------------------------------------------
             # HOSPITAL SERVICE

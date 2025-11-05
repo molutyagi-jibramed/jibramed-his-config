@@ -1,8 +1,2 @@
 server:
   port: 19111
-
-app:
-  tenant:
-    create-db-on-register: true
-    db-admin-user: postgres
-    db-admin-password: root
