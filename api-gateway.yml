@@ -38,6 +38,7 @@ spring:
               predicates:
                 - Path=/api/v1/modules/**
                 - Path=/api/v1/subscriptions/**
+                - Path=/api/v1/plans/**
               filters:
                 - StripPrefix=2
 
