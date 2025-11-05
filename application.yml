@@ -79,7 +79,11 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: ERROR
     org.springframework.web: WARN
     org.springframework.cloud.gateway: INFO
-    reactor.netty: WARN
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+    org.springframework.cloud.gateway.filter.NettyRoutingFilter: DEBUG
+    reactor.netty.http.server: DEBUG # shows incoming requests
+    reactor.netty.http.client: DEBUG # shows outgoing load-balanced calls
+
   file:
     name: logs/jibramed-application.log
   logback:
