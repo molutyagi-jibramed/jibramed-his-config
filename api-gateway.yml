@@ -7,6 +7,10 @@ server:
 spring:
   cloud:
     gateway:
+      httpServer:
+        wiretap: true
+      httpclient:
+        wiretap: true
       server:
         webflux:
           routes:
