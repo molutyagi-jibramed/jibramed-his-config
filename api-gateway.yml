@@ -37,7 +37,10 @@ spring:
               uri: lb://SUBSCRIPTION-SERVICE
               predicates:
                 - Path=/api/v1/modules/**
+<<<<<<< HEAD
                 - Path=/api/v1/subscriptions/**
+=======
+>>>>>>> 0dcf34fe9f39c3bc59ca32993662996c613df541
               filters:
                 - StripPrefix=2
 
