@@ -100,7 +100,7 @@ logging:
     org.hibernate.orm.jdbc.bind: TRACE # Only enable if debugging SQL parameters (disable after)
 
     # Multi-tenancy routing (use DEBUG occasionally)
-    com.his.jibramed.multitenancy: INFO
+    com.his.jibramed.multitenancy: DEBUG
 
     # Gateway Logs (clean but visible)
     org.springframework.cloud.gateway: INFO
