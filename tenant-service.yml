@@ -1,2 +1,5 @@
 server:
   port: 18111
+
+  flyway:
+    locations: classpath:db/migration/platform
