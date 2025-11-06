@@ -82,8 +82,8 @@ logging:
     org.springframework.cloud.gateway: INFO
     org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
     org.springframework.cloud.gateway.filter.NettyRoutingFilter: DEBUG
-    reactor.netty.http.server: DEBUG # shows incoming requests
-    reactor.netty.http.client: DEBUG # shows outgoing load-balanced calls
+    # reactor.netty.http.server: DEBUG # shows incoming requests
+    # reactor.netty.http.client: DEBUG # shows outgoing load-balanced calls
 
   file:
     name: logs/jibramed-application.log
