@@ -102,6 +102,16 @@ logging:
     # Multi-tenancy routing (use DEBUG occasionally)
     com.his.jibramed.multitenancy: DEBUG
 
+    # For our services
+    com.his.jibramed.apigateway: DEBUG
+    com.his.jibramed.authenticationservice: DEBUG
+    com.his.jibramed.configserver: DEBUG
+    com.his.jibramed.platformuserservice: DEBUG
+    com.his.jibramed.serviceregistry: DEBUG
+    com.his.jibramed.subscriptionservice: DEBUG
+    com.his.jibramed.tenantservice: DEBUG
+    com.his.jibramed.tenantuserservice: DEBUG
+
     # Gateway Logs (clean but visible)
     org.springframework.cloud.gateway: INFO
 
