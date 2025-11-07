@@ -41,6 +41,7 @@ spring:
             - id: subscription-service-route
               uri: lb://SUBSCRIPTION-SERVICE
               predicates:
+                - Host=localhost,localhost:**,www.localhost,www.localhost:**,jibramed.com,www.jibramed.com
                 - Path=/api/v1/modules/**,/api/v1/subscriptions/**,/api/v1/plans/**
               filters:
                 - StripPrefix=2
@@ -51,7 +52,7 @@ spring:
             - id: platformuser-service-route
               uri: lb://PLATFORMUSER-SERVICE
               predicates:
-                - Host=localhost,localhost:8080,www.localhost,www.localhost:8080,jibramed.com,www.jibramed.com
+                - Host=localhost,localhost:**,www.localhost,www.localhost:**,jibramed.com,www.jibramed.com
                 - Path=/api/v1/users/**
               filters:
                 - StripPrefix=2
