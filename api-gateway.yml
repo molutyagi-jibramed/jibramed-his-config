@@ -39,7 +39,9 @@ spring:
               uri: lb://TENANT-SERVICE
               order: -10
               predicates:
-                - Host=app.jibramed.com, localhost, *.localhost
+                - Host=app.jibramed.com
+                - Host=localhost
+                - Host=*.localhost
                 - Path=/api/v1/tenants/**
               filters:
                 - StripPrefix=2
