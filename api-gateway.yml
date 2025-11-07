@@ -18,69 +18,70 @@ spring:
         - RemoveRequestHeader=X-Realm
         - RemoveRequestHeader=X-Tenant-Key
         - RemoveRequestHeader=X-Tenant-ID
+      server:
+        webflux:
+          routes:
+            # ------------------------------------------------------
+            # AUTHENTICATION SERVICE (shared: platform + tenant)
+            # ------------------------------------------------------
+            - id: auth-service-route
+              uri: lb://AUTHENTICATION-SERVICE
+              order: -10
+              predicates:
+                - Path=/api/v1/auth/**
+              filters:
+                - StripPrefix=2
 
-      routes:
-        # ------------------------------------------------------
-        # AUTHENTICATION SERVICE (shared: platform + tenant)
-        # ------------------------------------------------------
-        - id: auth-service-route
-          uri: lb://AUTHENTICATION-SERVICE
-          order: -10
-          predicates:
-            - Path=/api/v1/auth/**
-          filters:
-            - StripPrefix=2
+            # ------------------------------------------------------
+            # TENANT SERVICE (platform-only)
+            # ------------------------------------------------------
+            - id: tenant-service-route
+              uri: lb://TENANT-SERVICE
+              order: -10
+              predicates:
+                - Host=app.jibramed.com, localhost, *.localhost
+                - Path=/api/v1/tenants/**
+              filters:
+                - StripPrefix=2
 
-        # ------------------------------------------------------
-        # TENANT SERVICE (platform-only)
-        # ------------------------------------------------------
-        - id: tenant-service-route
-          uri: lb://TENANT-SERVICE
-          order: -10
-          predicates:
-            - Host=app.jibramed.com, localhost, *.localhost
-            - Path=/api/v1/tenants/**
-          filters:
-            - StripPrefix=2
+            # ------------------------------------------------------
+            # SUBSCRIPTION SERVICE (platform-only)
+            # ------------------------------------------------------
+            - id: subscription-service-route
+              uri: lb://SUBSCRIPTION-SERVICE
+              order: -10
+              predicates:
+                - Host=app.jibramed.com, localhost, *.localhost
+                - Path=/api/v1/modules/**, /api/v1/subscriptions/**, /api/v1/plans/**
+              filters:
+                - StripPrefix=2
 
-        # ------------------------------------------------------
-        # SUBSCRIPTION SERVICE (platform-only)
-        # ------------------------------------------------------
-        - id: subscription-service-route
-          uri: lb://SUBSCRIPTION-SERVICE
-          order: -10
-          predicates:
-            - Host=app.jibramed.com, localhost, *.localhost
-            - Path=/api/v1/modules/**, /api/v1/subscriptions/**, /api/v1/plans/**
-          filters:
-            - StripPrefix=2
+            # ------------------------------------------------------
+            # PLATFORM USER SERVICE (platform-only)
+            # ------------------------------------------------------
+            - id: platformuser-service-route
+              uri: lb://PLATFORMUSER-SERVICE
+              order: -10
+              predicates:
+                - Host=app.jibramed.com, localhost, *.localhost
+                - Path=/api/v1/users/**
+              filters:
+                - StripPrefix=2
 
-        # ------------------------------------------------------
-        # PLATFORM USER SERVICE (platform-only)
-        # ------------------------------------------------------
-        - id: platformuser-service-route
-          uri: lb://PLATFORMUSER-SERVICE
-          order: -10
-          predicates:
-            - Host=app.jibramed.com, localhost, *.localhost
-            - Path=/api/v1/users/**
-          filters:
-            - StripPrefix=2
-
-        # ------------------------------------------------------
-        # TENANT USER SERVICE (tenant subdomains only)
-        # NOTE: Put after platform routes and with higher order so
-        #       app.jibramed.com hits platform routes first.
-        # ------------------------------------------------------
-        - id: tenantuser-service-route
-          uri: lb://TENANTUSER-SERVICE
-          order: 0
-          predicates:
-            - Host=*.jibramed.com, *.localhost
-            - Path=/api/v1/users/**
-          filters:
-            - StripPrefix=2
-            - PreserveHostHeader=true
+            # ------------------------------------------------------
+            # TENANT USER SERVICE (tenant subdomains only)
+            # NOTE: Put after platform routes and with higher order so
+            #       app.jibramed.com hits platform routes first.
+            # ------------------------------------------------------
+            - id: tenantuser-service-route
+              uri: lb://TENANTUSER-SERVICE
+              order: 0
+              predicates:
+                - Host=*.jibramed.com, *.localhost
+                - Path=/api/v1/users/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader=true
 
 management:
   endpoints:
