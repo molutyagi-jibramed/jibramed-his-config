@@ -30,6 +30,9 @@ spring:
             - id: tenant-service-route
               uri: lb://TENANT-SERVICE
               predicates:
+                - Host=app.jibramed.com
+                - Host=localhost
+                - Host=*.localhost
                 - Path=/api/v1/tenants/**
               filters:
                 - StripPrefix=2
@@ -40,6 +43,10 @@ spring:
             - id: subscription-service-route
               uri: lb://SUBSCRIPTION-SERVICE
               predicates:
+                - Host=app.jibramed.com
+                - Host=localhost
+                - Host=*.localhost
+
                 - Path=/api/v1/modules/**,/api/v1/subscriptions/**,/api/v1/plans/**
               filters:
                 - StripPrefix=2
@@ -50,7 +57,10 @@ spring:
             - id: platformuser-service-route
               uri: lb://PLATFORMUSER-SERVICE
               predicates:
-                - Host=localhost,localhost:8080,www.localhost,www.localhost:8080,jibramed.com,www.jibramed.com
+                - Host=app.jibramed.com
+                - Host=localhost
+                - Host=*.localhost
+
                 - Path=/api/v1/users/**
               filters:
                 - StripPrefix=2
