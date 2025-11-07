@@ -30,7 +30,7 @@ spring:
             - id: tenant-service-route
               uri: lb://TENANT-SERVICE
               predicates:
-                - Host=app.jibramed.com, localhost:**
+                - Host=app.jibramed.com, localhost:**, *.localhost
                 - Path=/api/v1/tenants/**
               filters:
                 - StripPrefix=2
