@@ -4,102 +4,86 @@
 server:
   port: 8080
 
-# Best Practice: Enable wiretap for debugging only.
-# In a production.yml profile, set these to false.
 spring:
   cloud:
     gateway:
-      httpServer:
-        wiretap: true
+      # lower-noise traffic taps (keep during debug; disable in prod)
       httpclient:
         wiretap: true
+      httpserver:
+        wiretap: true
 
-      # Use nested routes for cleaner, more secure, host-based routing.
+      # Never trust client-sent multi-tenancy headers. Strip them globally.
+      default-filters:
+        - RemoveRequestHeader=X-Realm
+        - RemoveRequestHeader=X-Tenant-Key
+        - RemoveRequestHeader=X-Tenant-ID
+
       routes:
-        # ======================================================================
-        # == GROUP 1: PLATFORM-ONLY ROUTES
-        # ==
-        # == These routes will ONLY match if the host is 'app.jibramed.com'
-        # == or 'localhost' (on any port).
-        # ======================================================================
-        - id: platform_routes
-          uri: no://op # This URI is not used, just a placeholder for the group
+        # ------------------------------------------------------
+        # AUTHENTICATION SERVICE (shared: platform + tenant)
+        # ------------------------------------------------------
+        - id: auth-service-route
+          uri: lb://AUTHENTICATION-SERVICE
+          order: -10
           predicates:
-            # Matches 'app.jibramed.com' OR 'localhost:8080', 'localhost:8081', etc.
-            - Host=app.jibramed.com, localhost:**
+            - Path=/api/v1/auth/**
           filters:
-            # This global filter will set the X-Realm header to 'platform'
-            # (Assuming your RealmAndTenantFilter is a GlobalFilter)
-            - StripPrefix=2 # /api/v1/ -> /
-          routes:
-            # --- AUTH SERVICE (for platform users) ---
-            - id: platform_auth_route
-              uri: lb://AUTHENTICATION-SERVICE
-              predicates:
-                - Path=/api/v1/auth/**
+            - StripPrefix=2
 
-            # --- PLATFORM USER SERVICE ---
-            - id: platform_user_route
-              uri: lb://PLATFORMUSER-SERVICE
-              predicates:
-                - Path=/api/v1/users/**
-              filters:
-                # This route is for platform, so we ensure no tenant key is passed
-                - RemoveRequestHeader=X-Tenant-Key
-
-            # --- TENANT SERVICE (Platform-only) ---
-            - id: tenant_service_route
-              uri: lb://TENANT-SERVICE
-              predicates:
-                - Path=/api/v1/tenants/**
-
-            # --- SUBSCRIPTION SERVICE (Platform-only) ---
-            - id: subscription_service_route
-              uri: lb://SUBSCRIPTION-SERVICE
-              predicates:
-                - Path=/api/v1/modules/**, /api/v1/subscriptions/**, /api/v1/plans/**
-
-        # ======================================================================
-        # == GROUP 2: TENANT-ONLY ROUTES
-        # ==
-        # == These routes will ONLY match for subdomains like
-        # == 'birla.jibramed.com' or 'dmh.localhost:8080'.
-        # == They will NOT match 'app.jibramed.com' or 'localhost'.
-        # ======================================================================
-        - id: tenant_routes
-          uri: no://op
+        # ------------------------------------------------------
+        # TENANT SERVICE (platform-only)
+        # ------------------------------------------------------
+        - id: tenant-service-route
+          uri: lb://TENANT-SERVICE
+          order: -10
           predicates:
-            # Matches all subdomains on production and any-port localhost
-            - Host=*.jibramed.com, *.localhost:**
+            - Host=app.jibramed.com, localhost, *.localhost
+            - Path=/api/v1/tenants/**
           filters:
-            # This global filter will set X-Realm to 'tenant' and add X-Tenant-Key
-            - StripPrefix=2 # /api/v1/ -> /
+            - StripPrefix=2
+
+        # ------------------------------------------------------
+        # SUBSCRIPTION SERVICE (platform-only)
+        # ------------------------------------------------------
+        - id: subscription-service-route
+          uri: lb://SUBSCRIPTION-SERVICE
+          order: -10
+          predicates:
+            - Host=app.jibramed.com, localhost, *.localhost
+            - Path=/api/v1/modules/**, /api/v1/subscriptions/**, /api/v1/plans/**
+          filters:
+            - StripPrefix=2
+
+        # ------------------------------------------------------
+        # PLATFORM USER SERVICE (platform-only)
+        # ------------------------------------------------------
+        - id: platformuser-service-route
+          uri: lb://PLATFORMUSER-SERVICE
+          order: -10
+          predicates:
+            - Host=app.jibramed.com, localhost, *.localhost
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
+
+        # ------------------------------------------------------
+        # TENANT USER SERVICE (tenant subdomains only)
+        # NOTE: Put after platform routes and with higher order so
+        #       app.jibramed.com hits platform routes first.
+        # ------------------------------------------------------
+        - id: tenantuser-service-route
+          uri: lb://TENANTUSER-SERVICE
+          order: 0
+          predicates:
+            - Host=*.jibramed.com, *.localhost
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=2
             - PreserveHostHeader=true
-          routes:
-            # --- AUTH SERVICE (for tenant users) ---
-            - id: tenant_auth_route
-              uri: lb://AUTHENTICATION-SERVICE
-              predicates:
-                - Path=/api/v1/auth/**
 
-            # --- TENANT USER SERVICE ---
-            - id: tenant_user_route
-              uri: lb://TENANTUSER-SERVICE
-              predicates:
-                - Path=/api/v1/users/**
-
-            # --- HOSPITAL SERVICE ---
-            - id: hospital_service_route
-              uri: lb://HOSPITAL-SERVICE
-              predicates:
-                - Path=/api/v1/hospitals/**
-
-# Management endpoint configuration
 management:
   endpoints:
     web:
       exposure:
         include: gateway, health, info
-  endpoint:
-    gateway:
-      access: unrestricted
