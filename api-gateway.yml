@@ -7,96 +7,77 @@ server:
 spring:
   cloud:
     gateway:
-      # FIX 1: 'httpclient' and 'httpserver' are direct children of 'gateway'
-      # 'httpServer' was also misspelled as 'httpserver'
+      httpServer:
+        wiretap: true
       httpclient:
         wiretap: true
-      httpserver:
-        wiretap: true
-
-      # FIX 2: 'routes' MUST be a direct child of 'spring.cloud.gateway'
-      # Your previous nesting under 'server.webflux' was causing
-      # the gateway to load ZERO routes, resulting in an empty 200 OK.
-      routes:
-        # ======================================================================
-        # == GROUP 1: PLATFORM-ONLY ROUTES
-        # ==
-        # == These routes will ONLY match if the host is 'app.jibramed.com'
-        # == or 'localhost' (on any port).
-        # ======================================================================
-        - id: platform_routes
-          uri: no://op # This URI is not used, just a placeholder for the group
-          predicates:
-            # Matches 'app.jibramed.com' OR 'localhost:8080', 'localhost:8081', etc.
-            - Host=app.jibramed.com, localhost:**
-          filters:
-            # This global filter will set the X-Realm header to 'platform'
-            # (Assuming your RealmAndTenantFilter is a GlobalFilter)
-            - StripPrefix=2 # /api/v1/ -> /
+      server:
+        webflux:
           routes:
-            # --- AUTH SERVICE (for platform users) ---
-            - id: platform_auth_route
+            # ------------------------------------------------------
+            # AUTHENTICATION SERVICE
+            # ------------------------------------------------------
+            - id: auth-service-route
               uri: lb://AUTHENTICATION-SERVICE
               predicates:
                 - Path=/api/v1/auth/**
-
-            # --- PLATFORM USER SERVICE ---
-            - id: platform_user_route
-              uri: lb://PLATFORMUSER-SERVICE
-              predicates:
-                - Path=/api/v1/users/**
               filters:
-                # This route is for platform, so we ensure no tenant key is passed
-                - RemoveRequestHeader=X-Tenant-Key
+                - StripPrefix=2
 
-            # --- TENANT SERVICE (Platform-only) ---
-            - id: tenant_service_route
+            # ------------------------------------------------------
+            # TENANT SERVICE (tenant registration, etc.)
+            # ------------------------------------------------------
+            - id: tenant-service-route
               uri: lb://TENANT-SERVICE
               predicates:
                 - Path=/api/v1/tenants/**
+              filters:
+                - StripPrefix=2
 
-            # --- SUBSCRIPTION SERVICE (Platform-only) ---
-            - id: subscription_service_route
+            # ------------------------------------------------------
+            # SUBSCRIPTION SERVICE (subscription registration, etc.)
+            # ------------------------------------------------------
+            - id: subscription-service-route
               uri: lb://SUBSCRIPTION-SERVICE
               predicates:
-                - Path=/api/v1/modules/**, /api/v1/subscriptions/**, /api/v1/plans/**
+                - Path=/api/v1/modules/**,/api/v1/subscriptions/**,/api/v1/plans/**
+              filters:
+                - StripPrefix=2
 
-        # ======================================================================
-        # == GROUP 2: TENANT-ONLY ROUTES
-        # ==
-        # == These routes will ONLY match for subdomains like
-        # == 'birla.jibramed.com' or 'dmh.localhost:8080'.
-        # == They will NOT match 'app.jibramed.com' or 'localhost'.
-        # ======================================================================
-        - id: tenant_routes
-          uri: no://op
-          predicates:
-            # Matches all subdomains on production and any-port localhost
-            - Host=*.jibramed.com, *.localhost:**
-          filters:
-            # This global filter will set X-Realm to 'tenant' and add X-Tenant-Key
-            - StripPrefix=2 # /api/v1/ -> /
-            - PreserveHostHeader=true
-          routes:
-            # --- AUTH SERVICE (for tenant users) ---
-            - id: tenant_auth_route
-              uri: lb://AUTHENTICATION-SERVICE
+            # ------------------------------------------------------
+            # PLATFORM USER SERVICE (for jibramed.com or www.jibramed.com)
+            # ------------------------------------------------------
+            - id: platformuser-service-route
+              uri: lb://PLATFORMUSER-SERVICE
               predicates:
-                - Path=/api/v1/auth/**
+                - Host=localhost,localhost:8080,www.localhost,www.localhost:8080,jibramed.com,www.jibramed.com
+                - Path=/api/v1/users/**
+              filters:
+                - StripPrefix=2
+                - RemoveRequestHeader=X-Tenant-ID
 
-            # --- TENANT USER SERVICE ---
-            - id: tenant_user_route
+            # ------------------------------------------------------
+            # TENANT USER SERVICE (for hospital subdomains)
+            # ------------------------------------------------------
+            - id: tenantuser-service-route
               uri: lb://TENANTUSER-SERVICE
               predicates:
+                - Host=**.jibramed.com,**.localhost,**.localhost:8080
                 - Path=/api/v1/users/**
+              filters:
+                - StripPrefix=2
+                - PreserveHostHeader=true
 
-            # --- HOSPITAL SERVICE ---
-            - id: hospital_service_route
+            # ------------------------------------------------------
+            # HOSPITAL SERVICE
+            # ------------------------------------------------------
+            - id: hospital-service-route
               uri: lb://HOSPITAL-SERVICE
               predicates:
                 - Path=/api/v1/hospitals/**
+              filters:
+                - StripPrefix=2
 
-# Management endpoint configuration
 management:
   endpoints:
     web:
