@@ -11,83 +11,77 @@ spring:
         wiretap: true
       httpclient:
         wiretap: true
+
       server:
         webflux:
           routes:
-            # ------------------------------------------------------
-            # AUTHENTICATION SERVICE
-            # ------------------------------------------------------
-            - id: auth-service-route
-              uri: lb://AUTHENTICATION-SERVICE
+            # ======================================================================
+            # == GROUP 2: PLATFORM-ONLY ROUTES
+            # ======================================================================
+            - id: platform_routes
+              uri: no://op
               predicates:
-                - Path=/api/v1/auth/**
+                - Host=app.jibramed.com, localhost:**
               filters:
-                - StripPrefix=2
+                - StripPrefix=2 # /api/v1/ -> /
+              routes:
+                # --- AUTH SERVICE (for platform users) ---
+                - id: platform_auth_route
+                  uri: lb://AUTHENTICATION-SERVICE
+                  predicates:
+                    - Path=/api/v1/auth/**
 
-            # ------------------------------------------------------
-            # TENANT SERVICE (tenant registration, etc.)
-            # ------------------------------------------------------
-            - id: tenant-service-route
-              uri: lb://TENANT-SERVICE
+                # --- PLATFORM USER SERVICE ---
+                - id: platform_user_route
+                  uri: lb://PLATFORMUSER-SERVICE
+                  predicates:
+                    - Path=/api/v1/users/**
+                  filters:
+                    # This route is for platform, so we ensure no tenant key is passed
+                    - RemoveRequestHeader=X-Tenant-Key
+
+                # --- TENANT SERVICE (Platform-only) ---
+                - id: tenant_service_route
+                  uri: lb://TENANT-SERVICE
+                  predicates:
+                    - Path=/api/v1/tenants/**
+
+                # --- SUBSCRIPTION SERVICE (Platform-only) ---
+                - id: subscription_service_route
+                  uri: lb://SUBSCRIPTION-SERVICE
+                  predicates:
+                    - Path=/api/v1/modules/**, /api/v1/subscriptions/**, /api/v1/plans/**
+
+            # ======================================================================
+            # == GROUP 2: TENANT-ONLY ROUTES
+            # ======================================================================
+            - id: tenant_routes
+              uri: no://op
               predicates:
-                - Host=app.jibramed.com
-                - Host=localhost
-                - Host=*.localhost
-                - Path=/api/v1/tenants/**
+                - Host=*.jibramed.com, *.localhost:**
               filters:
-                - StripPrefix=2
-
-            # ------------------------------------------------------
-            # SUBSCRIPTION SERVICE (subscription registration, etc.)
-            # ------------------------------------------------------
-            - id: subscription-service-route
-              uri: lb://SUBSCRIPTION-SERVICE
-              predicates:
-                - Host=app.jibramed.com
-                - Host=localhost
-                - Host=*.localhost
-
-                - Path=/api/v1/modules/**,/api/v1/subscriptions/**,/api/v1/plans/**
-              filters:
-                - StripPrefix=2
-
-            # ------------------------------------------------------
-            # PLATFORM USER SERVICE (for jibramed.com or www.jibramed.com)
-            # ------------------------------------------------------
-            - id: platformuser-service-route
-              uri: lb://PLATFORMUSER-SERVICE
-              predicates:
-                - Host=app.jibramed.com
-                - Host=localhost
-                - Host=*.localhost
-
-                - Path=/api/v1/users/**
-              filters:
-                - StripPrefix=2
-                - RemoveRequestHeader=X-Tenant-ID
-
-            # ------------------------------------------------------
-            # TENANT USER SERVICE (for hospital subdomains)
-            # ------------------------------------------------------
-            - id: tenantuser-service-route
-              uri: lb://TENANTUSER-SERVICE
-              predicates:
-                - Host=**.jibramed.com,**.localhost,**.localhost:8080
-                - Path=/api/v1/users/**
-              filters:
-                - StripPrefix=2
+                - StripPrefix=2 # /api/v1/ -> /
                 - PreserveHostHeader=true
+              routes:
+                # --- AUTH SERVICE (for tenant users) ---
+                - id: tenant_auth_route
+                  uri: lb://AUTHENTICATION-SERVICE
+                  predicates:
+                    - Path=/api/v1/auth/**
 
-            # ------------------------------------------------------
-            # HOSPITAL SERVICE
-            # ------------------------------------------------------
-            - id: hospital-service-route
-              uri: lb://HOSPITAL-SERVICE
-              predicates:
-                - Path=/api/v1/hospitals/**
-              filters:
-                - StripPrefix=2
+                # --- TENANT USER SERVICE ---
+                - id: tenant_user_route
+                  uri: lb://TENANTUSER-SERVICE
+                  predicates:
+                    - Path=/api/v1/users/**
 
+                # --- HOSPITAL SERVICE ---
+                - id: hospital_service_route
+                  uri: lb://HOSPITAL-SERVICE
+                  predicates:
+                    - Path=/api/v1/hospitals/**
+
+# Management endpoint configuration
 management:
   endpoints:
     web:
