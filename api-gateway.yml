@@ -30,6 +30,7 @@ spring:
             - id: tenant-service-route
               uri: lb://TENANT-SERVICE
               predicates:
+                - Host=localhost:**
                 - Path=/api/v1/tenants/**
               filters:
                 - StripPrefix=2
