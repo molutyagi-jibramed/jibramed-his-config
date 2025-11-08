@@ -18,7 +18,7 @@ spring:
             # AUTHENTICATION SERVICE
             # ------------------------------------------------------
             - id: auth-service-route
-              uri: lb://authentication-service
+              uri: lb://AUTHENTICATION-SERVICE
               predicates:
                 - Path=/api/v1/auth/**
               filters:
@@ -28,7 +28,7 @@ spring:
             # TENANT SERVICE (tenant registration, etc.)
             # ------------------------------------------------------
             - id: tenant-service-route
-              uri: lb://tenant-service
+              uri: lb://TENANT-SERVICE
               predicates:
                 - Host=localhost,localhost:**,www.localhost,www.localhost:**,jibramed.com,www.jibramed.com
                 - Path=/api/v1/tenants/**
@@ -39,7 +39,7 @@ spring:
             # SUBSCRIPTION SERVICE (subscription registration, etc.)
             # ------------------------------------------------------
             - id: subscription-service-route
-              uri: lb://subscription-service
+              uri: lb://SUBSCRIPTION-SERVICE
               predicates:
                 - Host=localhost,localhost:**,www.localhost,www.localhost:**,jibramed.com,www.jibramed.com
                 - Path=/api/v1/modules/**,/api/v1/subscriptions/**,/api/v1/plans/**
@@ -50,7 +50,7 @@ spring:
             # PLATFORM USER SERVICE (for jibramed.com or www.jibramed.com)
             # ------------------------------------------------------
             - id: platformuser-service-route
-              uri: lb://platformuser-service
+              uri: lb://PLATFORMUSER-SERVICE
               predicates:
                 - Host=localhost,localhost:**,www.localhost,www.localhost:**,jibramed.com,www.jibramed.com
                 - Path=/api/v1/users/**
@@ -62,7 +62,7 @@ spring:
             # TENANT USER SERVICE (for hospital subdomains)
             # ------------------------------------------------------
             - id: tenantuser-service-route
-              uri: lb://tenantuser-service
+              uri: lb://TENANTUSER-SERVICE
               predicates:
                 - Path=/api/v1/users/**
               filters:
@@ -73,7 +73,7 @@ spring:
             # SCHEMA SERVICE (schema registration, etc.)
             # ------------------------------------------------------
             - id: schema-service-route
-              uri: lb://schema-service
+              uri: lb://SCHEMA-SERVICE
               predicates:
                 - Path=/api/v1/schemas/**
               filters:
