@@ -52,7 +52,7 @@ app:
     tenant-datasource:
       pool-name-prefix: "TenantPool-"
       connection-timeout: 30000
-      maximum-pool-size: 15
+      maximum-pool-size: 3
       idleTimeout: 600000 # 10 minutes
       maxLifetime: 1800000 # 30 mins
       datasource-cache-max-size: 100
