@@ -25,6 +25,10 @@ spring:
     baseline-on-migrate: true
 
   cloud:
+    loadbalancer:
+      cache:
+        enabled: true
+        ttl: 5s # default = ~35s → reduce stale routing cache
     config:
       fail-fast: true
       retry:
@@ -32,13 +36,6 @@ spring:
         max-interval: 2000
         multiplier: 1.1
         initial-interval: 1000
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
 
 # -------------------------------------------------------------------
 # APPLICATION-LEVEL SETTINGS
