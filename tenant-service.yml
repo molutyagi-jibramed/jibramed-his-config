@@ -1,5 +1,6 @@
+# Tenant Service
 server:
-  port: 18111
+  port: 9200
 
 spring:
   datasource:

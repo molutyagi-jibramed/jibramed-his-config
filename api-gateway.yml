@@ -2,7 +2,7 @@
 # API GATEWAY CONFIGURATION
 # -----------------------------------------------------------------------------
 server:
-  port: 8080
+  port: 8000
 
 spring:
   cloud:
@@ -75,7 +75,6 @@ spring:
             - id: schema-service-route
               uri: lb://SCHEMA-SERVICE
               predicates:
-                # - Host=localhost,localhost:**,www.localhost,www.localhost:**,jibramed.com,www.jibramed.com
                 - Path=/api/v1/schemas/**
               filters:
                 - StripPrefix=2

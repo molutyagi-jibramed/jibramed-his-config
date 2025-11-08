@@ -1,2 +1,3 @@
+# Schema Service
 server:
-  port: 18311
+  port: 10100
